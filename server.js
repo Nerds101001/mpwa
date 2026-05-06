@@ -74,12 +74,18 @@ server.listen(port, () => {
 dbs.db.query("SELECT * FROM devices WHERE status = 'Connected'", (err, results) => {
   if (err) {
     console.error('Error executing query:', err);
+    return;
   }
-  if (results) {
+  if (results && results.length > 0) {
     results.forEach(row => {
-      const number = row.body;
-      if (/^\d+$/.test(number)) {
-        wa.connectToWhatsApp(number);
+      try {
+        const number = row.body;
+        if (/^\d+$/.test(number)) {
+          console.log(`Attempting to reconnect device: ${number}`);
+          wa.connectToWhatsApp(number);
+        }
+      } catch (e) {
+        console.error(`Failed to reconnect device ${row.body}:`, e.message);
       }
     });
   }
