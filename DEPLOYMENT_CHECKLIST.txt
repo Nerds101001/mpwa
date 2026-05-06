@@ -1,0 +1,174 @@
+═══════════════════════════════════════════════════════════════
+           MPWA DEPLOYMENT CHECKLIST - inv.enginerds.in
+═══════════════════════════════════════════════════════════════
+
+✅ COMPLETED STEPS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[✓] Local application working
+[✓] Database credentials configured
+[✓] Deployment package created
+[✓] SSH connection tested
+[✓] Documentation prepared
+
+📦 DEPLOYMENT PACKAGE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Location: C:\Users\THE_NE~1\AppData\Local\Temp\mpwa-deployment.zip
+Status:   ✅ Ready with database credentials
+Size:     ~50-100 MB (without node_modules/vendor)
+
+🔐 YOUR CREDENTIALS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SERVER ACCESS:
+  SSH Host:     145.79.209.199
+  SSH Port:     65002
+  SSH User:     u757590993
+  SSH Password: Diplo@6589#
+  
+DATABASE:
+  DB Name:      u757590993_inv3db
+  DB User:      u757590993_inv3
+  DB Password:  p&6PV6#nw&Vf
+  
+DOMAIN:
+  URL:          https://inv.enginerds.in
+  Path:         /home/u757590993/domains/enginerds.in/public_html/inv
+  
+ADMIN LOGIN (after deployment):
+  Username:     admin
+  Password:     Admin@123456
+
+🎯 DEPLOYMENT STEPS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: UPLOAD TO HOSTINGER
+□ Go to: https://hpanel.hostinger.com
+□ Login to your account
+□ Click "File Manager"
+□ Navigate to: /home/u757590993/domains/enginerds.in/public_html/inv/
+□ Click "Upload" button
+□ Select: mpwa-deployment.zip
+□ Wait for upload to complete (5-10 minutes)
+□ Right-click ZIP → Extract
+□ Delete ZIP file (optional)
+
+STEP 2: CONNECT VIA SSH
+□ Open PowerShell/Terminal
+□ Run: ssh -p 65002 u757590993@145.79.209.199
+□ Enter password: Diplo@6589#
+□ Navigate: cd /home/u757590993/domains/enginerds.in/public_html/inv
+
+STEP 3: CHECK REQUIREMENTS
+□ Check PHP: php -v (needs 8.2+)
+□ Check Node.js: node -v (needs 16+)
+□ Check Composer: composer -v
+□ If Node.js missing → Contact Hostinger support
+
+STEP 4: CONFIGURE ENVIRONMENT
+□ Copy config: cp .env.production .env
+□ Or edit: nano .env
+□ Verify database credentials are correct
+□ Save and exit
+
+STEP 5: INSTALL DEPENDENCIES
+□ PHP: composer install --no-dev --optimize-autoloader
+□ Node: npm install --production
+□ Wait for completion (5-10 minutes)
+
+STEP 6: SETUP APPLICATION
+□ Generate key: php artisan key:generate --force
+□ Set permissions: chmod -R 777 storage credentials
+□ Test DB: php artisan tinker (then: DB::connection()->getPdo();)
+□ Run migrations: php artisan migrate --force
+□ Seed plans: php artisan db:seed --class=PlansSeeder --force
+
+STEP 7: CREATE ADMIN USER
+□ Run: php artisan tinker
+□ Paste admin creation code (see SERVER_SETUP_COMMANDS.txt)
+□ Exit tinker
+
+STEP 8: OPTIMIZE LARAVEL
+□ php artisan config:cache
+□ php artisan route:cache
+□ php artisan view:cache
+□ php artisan optimize
+
+STEP 9: START NODE.JS SERVER
+□ With PM2: pm2 start server.js --name whatsapp-gateway
+□ Or: nohup node server.js > node.log 2>&1 &
+□ Check: ps aux | grep node
+□ Verify: netstat -tulpn | grep 3100
+
+STEP 10: CONFIGURE DOMAIN
+□ Create .htaccess in root (see SERVER_SETUP_COMMANDS.txt)
+□ Enable SSL in cPanel
+□ Force HTTPS redirect
+
+STEP 11: TEST APPLICATION
+□ Visit: https://inv.enginerds.in
+□ Login with admin credentials
+□ Change password immediately
+□ Test WhatsApp connection
+
+📚 REFERENCE DOCUMENTS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. SERVER_SETUP_COMMANDS.txt    → Copy/paste ready commands
+2. UPLOAD_INSTRUCTIONS.md        → Detailed upload guide
+3. HOSTINGER_DEPLOYMENT.md       → Complete deployment guide
+4. TECHNOLOGIES_AND_DEPLOYMENT.md → Tech stack information
+5. QUICK_DEPLOYMENT_REFERENCE.txt → Quick reference
+
+🐛 COMMON ISSUES & SOLUTIONS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Issue: Node.js not found
+  → Contact Hostinger support
+  → Ask: "Does my plan support Node.js?"
+  → Or use hybrid deployment
+
+Issue: Permission denied
+  → chmod -R 755 .
+  → chmod -R 777 storage credentials bootstrap/cache
+
+Issue: Database connection failed
+  → Check credentials in .env
+  → Verify database exists in cPanel
+  → Test: php artisan tinker → DB::connection()->getPdo();
+
+Issue: 500 Internal Server Error
+  → Check logs: tail -f storage/logs/laravel.log
+  → Clear cache: php artisan optimize:clear
+  → Check permissions
+
+Issue: Node.js server won't start
+  → Check logs: tail -f node.log
+  → Check port: netstat -tulpn | grep 3100
+  → Try different port in .env
+
+⚠️ IMPORTANT REMINDERS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Change admin password immediately after first login
+• Enable SSL certificate for HTTPS
+• Set up regular backups
+• Configure cron jobs for scheduled tasks
+• Monitor logs regularly
+• Keep dependencies updated
+
+📞 SUPPORT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Hostinger Support:
+  • Live chat in cPanel
+  • Email: support@hostinger.com
+  • Phone: Check your account
+
+Technical Issues:
+  • Check SERVER_SETUP_COMMANDS.txt
+  • Review error logs
+  • Test each component separately
+
+═══════════════════════════════════════════════════════════════
+                    🚀 READY TO DEPLOY!
+═══════════════════════════════════════════════════════════════
+
+Start by uploading the ZIP file to Hostinger cPanel!
+Then follow SERVER_SETUP_COMMANDS.txt step by step.
+
+Good luck! 🎉

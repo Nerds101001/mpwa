@@ -1,0 +1,242 @@
+═══════════════════════════════════════════════════════════════
+    SERVER SETUP COMMANDS - COPY & PASTE READY
+═══════════════════════════════════════════════════════════════
+
+📋 YOUR DATABASE CREDENTIALS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Database Name: u757590993_inv3db
+Database User: u757590993_inv3
+Database Pass: p&6PV6#nw&Vf
+
+🔌 STEP 1: CONNECT TO SERVER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ssh -p 65002 u757590993@145.79.209.199
+Password: Diplo@6589#
+
+📂 STEP 2: NAVIGATE TO PROJECT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+cd /home/u757590993/domains/enginerds.in/public_html/inv
+
+📦 STEP 3: EXTRACT FILES (if uploaded ZIP)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+unzip mpwa-deployment.zip
+rm mpwa-deployment.zip
+
+⚙️  STEP 4: CONFIGURE ENVIRONMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Copy production environment
+cp .env.production .env
+
+# Or create new .env file
+nano .env
+
+# Paste this configuration:
+APP_NAME=MPWA
+APP_ENV=production
+APP_KEY=base64:PxGRSZnMJVvMO7erMUXd683lMJwYFWpdxufKRbugeq8=
+APP_DEBUG=false
+APP_URL=https://inv.enginerds.in
+
+WA_URL_SERVER=https://inv.enginerds.in:3100
+PORT_NODE=3100
+APP_INSTALLED=true
+LICENSE_KEY=MagdAlmuntaser
+BUYER_EMAIL=admin@admin.com
+TYPE_SERVER=production
+
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=u757590993_inv3db
+DB_USERNAME=u757590993_inv3
+DB_PASSWORD=p&6PV6#nw&Vf
+
+LOG_CHANNEL=stack
+LOG_LEVEL=error
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DRIVER=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+REGISTERATION=true
+THEME_NAME=vuexy
+THEME_INDEX=vuexy
+ENABLE_INDEX=yes
+ORIGIN=https://inv.enginerds.in
+
+TRIAL_MESSAGE_LIMIT=50
+TRIAL_DEVICES_LIMIT=1
+
+# Save: CTRL+O, Enter, CTRL+X
+
+🔧 STEP 5: CHECK REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Check PHP version (needs 8.2+)
+php -v
+
+# Check Node.js (needs 16+)
+node -v
+npm -v
+
+# Check Composer
+composer -v
+
+📦 STEP 6: INSTALL DEPENDENCIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Install PHP dependencies
+composer install --no-dev --optimize-autoloader --no-interaction
+
+# Install Node.js dependencies
+npm install --production
+
+🔑 STEP 7: GENERATE APP KEY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+php artisan key:generate --force
+
+🔒 STEP 8: SET PERMISSIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+chmod -R 755 storage bootstrap/cache
+chmod -R 777 storage
+mkdir -p credentials
+chmod -R 777 credentials
+
+💾 STEP 9: RUN DATABASE MIGRATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Test database connection first
+php artisan tinker --execute="echo 'DB: ' . (DB::connection()->getPdo() ? 'Connected' : 'Failed');"
+
+# Run migrations
+php artisan migrate --force
+
+# Seed plans
+php artisan db:seed --class=PlansSeeder --force
+
+👤 STEP 10: CREATE ADMIN USER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+php artisan tinker
+
+# Then paste this (change password if needed):
+use App\Models\User;
+use Illuminate\Support\Str;
+User::create([
+    'username' => 'admin',
+    'email' => 'admin@admin.com',
+    'password' => bcrypt('Admin@123456'),
+    'level' => 'admin',
+    'api_key' => Str::random(32),
+    'chunk_blast' => 100,
+    'delete_history' => 0,
+]);
+echo "Admin created!";
+exit
+
+⚡ STEP 11: OPTIMIZE LARAVEL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+
+🚀 STEP 12: START NODE.JS SERVER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Option A: With PM2 (if available)
+pm2 start server.js --name whatsapp-gateway
+pm2 save
+pm2 startup
+
+# Option B: Without PM2
+nohup node server.js > node.log 2>&1 &
+
+# Check if running
+ps aux | grep node
+netstat -tulpn | grep 3100
+
+📝 STEP 13: CONFIGURE .HTACCESS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Create/edit .htaccess in root
+nano .htaccess
+
+# Paste this:
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Save: CTRL+O, Enter, CTRL+X
+
+✅ STEP 14: VERIFY DEPLOYMENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Check Laravel logs
+tail -f storage/logs/laravel.log
+
+# Check Node.js logs
+tail -f node.log
+
+# Check Node.js process
+pm2 status
+# or
+ps aux | grep node
+
+🌐 STEP 15: ACCESS APPLICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+URL: https://inv.enginerds.in
+Login: https://inv.enginerds.in/login
+
+Admin Credentials:
+Username: admin
+Password: Admin@123456
+
+🔐 STEP 16: ENABLE SSL (IMPORTANT!)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Go to Hostinger cPanel
+2. Find "SSL/TLS" or "SSL Certificate"
+3. Enable SSL for inv.enginerds.in
+4. Force HTTPS redirect
+
+🐛 TROUBLESHOOTING COMMANDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Clear all caches
+php artisan optimize:clear
+
+# Check database connection
+php artisan tinker
+>>> DB::connection()->getPdo();
+>>> exit
+
+# Restart Node.js
+pm2 restart whatsapp-gateway
+# or
+pkill -f "node server.js"
+nohup node server.js > node.log 2>&1 &
+
+# Check permissions
+ls -la storage
+ls -la credentials
+
+# View recent errors
+tail -50 storage/logs/laravel.log
+
+# Check if port 3100 is listening
+netstat -tulpn | grep 3100
+
+# Test Node.js manually
+node server.js
+# (Press CTRL+C to stop, then run with nohup)
+
+═══════════════════════════════════════════════════════════════
+                    🎯 QUICK REFERENCE
+═══════════════════════════════════════════════════════════════
+
+SSH:        ssh -p 65002 u757590993@145.79.209.199
+Password:   Diplo@6589#
+Path:       /home/u757590993/domains/enginerds.in/public_html/inv
+Domain:     https://inv.enginerds.in
+Admin:      admin / Admin@123456
+
+Database:   u757590993_inv3db
+DB User:    u757590993_inv3
+DB Pass:    p&6PV6#nw&Vf
+
+═══════════════════════════════════════════════════════════════

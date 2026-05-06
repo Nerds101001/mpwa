@@ -1,0 +1,11 @@
+node_modules/
+vendor/
+.env
+credentials/
+storage/logs/
+*.zip
+*.tar.gz
+*.rar
+views.tar.gz
+complete-deploy.zip
+complete-project.zip
