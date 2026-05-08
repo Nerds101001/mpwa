@@ -7,6 +7,7 @@ const router = express.Router();
  * THIS IS MAIN ROUTER
  */
 const controllers = require("../controllers");
+const adminController = require("../controllers/admin");
 //const store = require("../controllers/store");
 const { initialize } = require("../whatsapp");
 const { sendBlastMessage } = require("../controllers/blast");
@@ -23,6 +24,15 @@ router.get("/", (req, res) => {
   const path = require("path");
   res.sendFile(path.join(__dirname, "../../public/index.html"));
 });
+
+// Admin Dashboard Routes
+router.get("/admin/dashboard", (req, res) => {
+  const path = require("path");
+  res.sendFile(path.join(__dirname, "../../public/admin.html"));
+});
+router.get("/admin/logs", adminController.getLogs);
+router.get("/admin/status", adminController.getSystemStatus);
+router.post("/admin/restart", adminController.restartGateway);
 
 router.post("/backend-logout", controllers.deleteCredentials);
 

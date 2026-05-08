@@ -2,9 +2,28 @@
 
 const wa = require("./server/whatsapp");
 const fs = require("fs");
+const path = require("path");
 const dbs = require('./server/database/index');
 const specs = require('./server/lib/specs');
 require("dotenv").config();
+
+// Redirect console to file for admin dashboard
+const logFile = path.join(__dirname, 'node.log');
+const logStream = fs.createWriteStream(logFile, { flags: 'a' });
+const originalStdoutWrite = process.stdout.write;
+const originalStderrWrite = process.stderr.write;
+
+process.stdout.write = function(chunk) {
+    logStream.write(chunk);
+    originalStdoutWrite.apply(process.stdout, arguments);
+};
+process.stderr.write = function(chunk) {
+    logStream.write(chunk);
+    originalStderrWrite.apply(process.stderr, arguments);
+};
+
+console.log(`\n--- Gateway Started: ${new Date().toISOString()} ---`);
+
 const lib = require("./server/lib");
 const chat = require("./server/chat")
 global.log = lib.log;

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Gateway Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #25D366;
+            --secondary: #128C7E;
+            --dark: #075E54;
+            --bg: #f0f2f5;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text: #1c1e21;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e5ddd5 0%, #ffffff 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .status-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .stats-label {
+            color: #65676b;
+            font-weight: 500;
+        }
+
+        .stats-value {
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .log-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 10px;
+            height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-restart {
+            background: #ff4757;
+            color: white;
+        }
+
+        .btn-restart:hover {
+            background: #ff6b81;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        .btn-refresh {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-refresh:hover {
+            background: var(--dark);
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            border-left: 3px solid transparent;
+            padding-left: 8px;
+        }
+
+        .log-error { border-left-color: #ff4757; color: #ff6b81; }
+        .log-warn { border-left-color: #ffa502; color: #eccc68; }
+        .log-info { border-left-color: #2ed573; }
+        .log-step { color: var(--primary); font-weight: bold; }
+
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.353-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.421-.272.347-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+                WA Gateway Admin
+            </div>
+            <div class="status-badge" id="online-status">SYSTEM ONLINE</div>
+        </header>
+
+        <div class="grid">
+            <div class="sidebar">
+                <div class="card">
+                    <h2>System Status</h2>
+                    <div id="system-stats">
+                        <div class="stats-item">
+                            <span class="stats-label">Uptime</span>
+                            <span class="stats-value" id="uptime">Loading...</span>
+                        </div>
+                        <div class="stats-item">
+                            <span class="stats-label">Node Version</span>
+                            <span class="stats-value" id="node-version">Loading...</span>
+                        </div>
+                        <div class="stats-item">
+                            <span class="stats-label">Memory RSS</span>
+                            <span class="stats-value" id="mem-rss">Loading...</span>
+                        </div>
+                        <div class="stats-item">
+                            <span class="stats-label">Heap Used</span>
+                            <span class="stats-value" id="mem-heap">Loading...</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-refresh" onclick="fetchStatus()">Refresh Status</button>
+                    <button class="btn btn-restart" onclick="restartGateway()">Restart Gateway</button>
+                </div>
+
+                <div class="card">
+                    <h2>Quick Info</h2>
+                    <p style="font-size: 0.9rem; color: #65676b; line-height: 1.6;">
+                        This dashboard provides direct access to the Node.js process. 
+                        <strong>Restarting</strong> will kill the current process; PM2 will automatically bring it back up within 5 seconds.
+                    </p>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Live Application Logs</h2>
+                        <span id="last-updated" style="font-size: 0.8rem; color: #65676b;"></span>
+                    </div>
+                    <div class="log-container" id="log-box">Initializing logs...</div>
+                    <button class="btn btn-refresh" onclick="fetchLogs()">Refresh Logs</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchStatus() {
+            try {
+                const res = await fetch('/admin/status');
+                const data = await res.json();
+                if (data.status) {
+                    document.getElementById('uptime').innerText = formatUptime(data.uptime);
+                    document.getElementById('node-version').innerText = data.nodeVersion;
+                    document.getElementById('mem-rss').innerText = data.memory.rss;
+                    document.getElementById('mem-heap').innerText = data.memory.heapUsed;
+                }
+            } catch (e) {
+                console.error('Status fetch failed', e);
+            }
+        }
+
+        async function fetchLogs() {
+            try {
+                const res = await fetch('/admin/logs');
+                const data = await res.json();
+                if (data.status) {
+                    const logBox = document.getElementById('log-box');
+                    const formattedLogs = data.logs.split('\n').map(line => {
+                        let className = '';
+                        if (line.includes('error') || line.includes('Error')) className = 'log-error';
+                        else if (line.includes('warn') || line.includes('Warn')) className = 'log-warn';
+                        else if (line.includes('info')) className = 'log-info';
+                        
+                        // Highlight Steps
+                        const stepMatch = line.match(/\[Step \d\/\d\]/);
+                        if (stepMatch) {
+                            line = line.replace(stepMatch[0], `<span class="log-step">${stepMatch[0]}</span>`);
+                        }
+
+                        return `<div class="log-entry ${className}">${line}</div>`;
+                    }).join('');
+                    
+                    logBox.innerHTML = formattedLogs;
+                    logBox.scrollTop = logBox.scrollHeight;
+                    document.getElementById('last-updated').innerText = 'Last updated: ' + new Date().toLocaleTimeString();
+                }
+            } catch (e) {
+                document.getElementById('log-box').innerText = 'Error fetching logs: ' + e.message;
+            }
+        }
+
+        async function restartGateway() {
+            if (!confirm('Are you sure you want to restart the WhatsApp Gateway? This will temporarily disconnect all active sessions.')) return;
+            
+            try {
+                const res = await fetch('/admin/restart', { method: 'POST' });
+                const data = await res.json();
+                alert(data.message);
+                document.getElementById('online-status').innerText = 'RESTARTING...';
+                document.getElementById('online-status').style.background = '#ffa502';
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 5000);
+            } catch (e) {
+                alert('Restart request sent. Check back in 5-10 seconds.');
+            }
+        }
+
+        function formatUptime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = Math.floor(seconds % 60);
+            return `${h}h ${m}m ${s}s`;
+        }
+
+        // Auto-refresh
+        fetchStatus();
+        fetchLogs();
+        setInterval(fetchStatus, 10000);
+        setInterval(fetchLogs, 5000);
+    </script>
+</body>
+</html>

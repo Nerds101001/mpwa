@@ -25,15 +25,13 @@ const setStatus = (device, status) => {
 }
 
 function dbQuery(query) {
-    return new Promise(data => {
+    return new Promise(resolve => {
         db.query(query, (err, res) => {
-            if (err) throw err;
-            try {
-                data(res);
-            } catch (error) {
-                data({});
-                //throw error;
+            if (err) {
+                console.error('Database Error:', err);
+                return resolve([]);
             }
+            resolve(res);
         })
     })
 }
